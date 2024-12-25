@@ -6,10 +6,10 @@ from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 
 app = Flask(__name__)
-
+PROXYMESH_PASSWORD = ${{shared.PROXYMESH_PASSWORD}}
 @app.route("/")
 def home():
-    return "Scraper API is up and running!"
+    return PROXYMESH_PASSWORD
 
 @app.route("/scrape", methods=["POST"])
 def scrape():
