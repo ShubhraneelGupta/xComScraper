@@ -1,6 +1,7 @@
 import os
 from flask import Flask, jsonify, request
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
@@ -10,7 +11,7 @@ app = Flask(__name__)
 
 PROXYMESH_USER_NAME = os.getenv("PROXYMESH_USER_NAME")
 PROXYMESH_PASSWORD = os.getenv("PROXYMESH_PASSWORD")
-PROXYMESH_URL = f"http://{PROXYMESH_USER_NAME}:{PROXYMESH_PASSWORD}in.proxymesh.com:31280"
+PROXYMESH_URL = f"http://{PROXYMESH_USER_NAME}:{PROXYMESH_PASSWORD}open.proxymesh.com:31280"
 
 # Configure Chrome options
 options = Options()
@@ -31,8 +32,9 @@ driver = webdriver.Chrome(service=service, options=options)
 
 @app.route("/")
 def home():
-    user_ip = request.remote_addr
-    return f"Your IP address is: {user_ip}"
+    driver.get("https://httpbin.org/ip")
+    body = driver.find_element(By.TAG_NAME, "body")
+    return body.text
 
 
 @app.route("/scrape", methods=["POST"])
