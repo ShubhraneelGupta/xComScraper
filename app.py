@@ -31,7 +31,7 @@ driver = webdriver.Chrome(service=service, options=options)
 
 @app.route("/")
 def home():
-    url_used = driver.get("https://whatismyipaddress.com")
+    url_used = driver.get("https://whatismyipaddress.com").title
     return url_used
 
 
