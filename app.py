@@ -6,7 +6,7 @@ from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 
 app = Flask(__name__)
-PROXYMESH_USER_NAME = process.env.PROXYMESH_USER_NAME
+PROXYMESH_USER_NAME = os.getenv(PROXYMESH_USER_NAME)
 @app.route("/")
 def home():
     return PROXYMESH_USER_NAME
