@@ -4,12 +4,15 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
+from flask_cors import CORS
+from selenium.webdriver.common.proxy import Proxy, ProxyType
 
 app = Flask(__name__)
-PROXYMESH_USER_NAME = os.getenv("PROXYMESH_USER_NAME")
+CORS(app)
+
 @app.route("/")
 def home():
-    return PROXYMESH_USER_NAME
+    return "Scraper API is up and running!"
 
 @app.route("/scrape", methods=["POST"])
 def scrape():
@@ -19,6 +22,16 @@ def scrape():
     if not url:
         return jsonify({"error": "URL is required"}), 400
 
+    # Get ProxyMesh credentials from environment variables
+    PROXYMESH_USER_NAME = os.getenv("PROXYMESH_USER_NAME")
+    PROXYMESH_PASSWORD = os.getenv("PROXYMESH_PASSWORD")
+
+    if not PROXYMESH_USER_NAME or not PROXYMESH_PASSWORD:
+        return jsonify({"error": "ProxyMesh credentials are missing"}), 400
+
+    # Create ProxyMesh URL using the credentials
+    PROXYMESH_URL = f"http://{PROXYMESH_USER_NAME}:{PROXYMESH_PASSWORD}@in.proxymesh.com:31280"
+
     # Configure Chrome options
     options = Options()
     options.add_argument("--headless")  # Run in headless mode
@@ -27,9 +40,18 @@ def scrape():
     options.add_argument("--disable-gpu")
     options.add_argument("--window-size=1920x1080")
 
-    # Start Selenium WebDriver
+    # Set up proxy for Selenium WebDriver
+    proxy = Proxy()
+    proxy.proxy_type = ProxyType.MANUAL
+    proxy.http_proxy = PROXYMESH_URL
+    proxy.ssl_proxy = PROXYMESH_URL
+
+    capabilities = webdriver.DesiredCapabilities.CHROME
+    proxy.add_to_capabilities(capabilities)
+
+    # Start Selenium WebDriver with Proxy
     service = Service("/usr/bin/chromedriver")
-    driver = webdriver.Chrome(service=service, options=options)
+    driver = webdriver.Chrome(service=service, options=options, desired_capabilities=capabilities)
 
     try:
         driver.get(url)
