@@ -31,8 +31,8 @@ driver = webdriver.Chrome(service=service, options=options)
 
 @app.route("/")
 def home():
-    url_used = driver.get("https://whatismyipaddress.com").title
-    return url_used
+    user_ip = request.remote_addr
+    return f"Your IP address is: {user_ip}"
 
 
 @app.route("/scrape", methods=["POST"])
