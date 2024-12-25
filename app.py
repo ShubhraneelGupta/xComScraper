@@ -4,11 +4,9 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
-from flask_cors import CORS
 from selenium.webdriver.common.proxy import Proxy, ProxyType
 
 app = Flask(__name__)
-CORS(app)
 
 @app.route("/")
 def home():
