@@ -10,8 +10,18 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from dotenv import load_dotenv
+import pymongo
+from uuid import uuid4
 
 load_dotenv('./.env')
+
+# MongoDB connection setup
+MONGODB_PASSWORD = os.getenv("MONGODB_PASSWORD")
+client = pymongo.MongoClient(
+    f"mongodb+srv://neel2002:{MONGODB_PASSWORD}@xcomscraper.nxbme.mongodb.net/?retryWrites=true&w=majority&appName=xcomscraper",
+)
+db = client["xcomscraper"]
+collection = db["trending_data"]
 
 app = Flask(__name__)
 CORS(app)
@@ -27,7 +37,7 @@ options.add_argument("--no-sandbox")
 options.add_argument("--headless")
 options.add_argument("--disable-dev-shm-usage")
 options.add_argument("--disable-gpu")
-options.add_argument("--window-size=1920,1080")
+options.add_argument("--window-size=2560,1440")
 # Set up proxy for Selenium WebDriver
 # options.add_argument('--proxy-server=%s' % PROXYMESH_URL)
 
@@ -69,6 +79,39 @@ def home():
     trends = driver.find_elements(By.CSS_SELECTOR, '[data-testid="trend"]')
     return [trend.text for trend in trends[:5]]
 
+
+@app.route("/api/save", methods=['POST'])
+def save_data():
+    try:
+        data = request.get_json()
+
+        # Validate required fields
+        required_fields = ["id", "trend1", "trend2", "trend3", "trend4", "trend5", "ip", "datetime"]
+        missing_fields = [field for field in required_fields if field not in data or not data[field]]
+
+        if missing_fields:
+            return jsonify({"error": f"Missing or empty fields: {', '.join(missing_fields)}"}), 400
+
+        # Prepare document for insertion
+        document = {
+            "id": data["id"],
+            "trend1": data["trend1"],
+            "trend2": data["trend2"],
+            "trend3": data["trend3"],
+            "trend4": data["trend4"],
+            "trend5": data["trend5"],
+            "ip": data["ip"],
+            "datetime": data["datetime"],
+        }
+
+        # Insert document into MongoDB
+        collection.insert_one(document)
+
+        return jsonify({"message": "Data saved successfully"}), 200
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error": str(e)}), 500
 
 # Bind to Railway's dynamic port
 PORT = int(os.environ.get("PORT", 8000))
