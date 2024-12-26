@@ -29,4 +29,4 @@ COPY . .
 EXPOSE 8000
 
 # Start the Flask server with Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "app:app"]
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8000", "--timeout", "120", "app:app"]
