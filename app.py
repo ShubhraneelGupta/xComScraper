@@ -15,6 +15,8 @@ app = Flask(__name__)
 PROXYMESH_USER_NAME = os.getenv("PROXYMESH_USER_NAME")
 PROXYMESH_PASSWORD = os.getenv("PROXYMESH_PASSWORD")
 PROXYMESH_URL = f"http://{PROXYMESH_USER_NAME}:{PROXYMESH_PASSWORD}@us-ca.proxymesh.com:31280"
+XCOM_USERNAME = os.getenv("XCOM_USERNAME")
+XCOM_PASSWORD = os.getenv("XCOM_PASSWORD")
 
 # Configure Chrome options
 options = Options()
@@ -50,7 +52,7 @@ def home():
     time.sleep(5)
     driver.find_element(By.TAG_NAME, "input").send_keys("shubhraneel2002\n")
 
-    time.sleep(2)
+    time.sleep(5)
     driver.find_elements(By.TAG_NAME, "input")[1].send_keys("#6equj57WOW\n")
 
     show_more = WebDriverWait(driver, 15).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '[href="/explore/tabs/for-you"]')))
