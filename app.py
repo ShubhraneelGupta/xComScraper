@@ -1,7 +1,6 @@
 import os
 from flask import Flask, jsonify, request
 import time
-from flask_cors import CORS
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -12,10 +11,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 
 app = Flask(__name__)
-CORS(app)
+
 PROXYMESH_USER_NAME = os.getenv("PROXYMESH_USER_NAME")
 PROXYMESH_PASSWORD = os.getenv("PROXYMESH_PASSWORD")
-PROXYMESH_URL = f"http://{PROXYMESH_USER_NAME}:{PROXYMESH_PASSWORD}@in.proxymesh.com:31280"
+PROXYMESH_URL = f"http://{PROXYMESH_USER_NAME}:{PROXYMESH_PASSWORD}@us-ca.proxymesh.com:31280"
 XCOM_USERNAME = os.getenv("XCOM_USERNAME")
 XCOM_PASSWORD = os.getenv("XCOM_PASSWORD")
 
@@ -39,7 +38,6 @@ service = Service("/usr/bin/chromedriver")
 def my_ip():
     driver = webdriver.Chrome(service=service, options=options)
     driver.get("https://www.whatismyip.net/")
-    ip_addr = WebDriverWait(driver, 15).until(EC.presence_of_all_elements_located((By.ID, 'userip')))
     ip_addr = driver.find_element(By.ID, "userip").text
     return ip_addr
 
@@ -54,17 +52,13 @@ def home():
     time.sleep(5)
     driver.find_element(By.TAG_NAME, "input").send_keys(f"{XCOM_USERNAME}\n")
 
-    time.sleep(5)
+    time.sleep(10)
     driver.find_elements(By.TAG_NAME, "input")[1].send_keys(F"{XCOM_PASSWORD}\n")
-
-    show_more = WebDriverWait(driver, 15).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '[href="/explore/tabs/for-you"]')))
-    show_more = driver.find_element(By.CSS_SELECTOR, '[href="/explore/tabs/for-you"]') 
-    show_more.click()
 
     trends = WebDriverWait(driver, 15).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '[data-testid="trend"]')))
     trends = driver.find_elements(By.CSS_SELECTOR, '[data-testid="trend"]')
     
-    return [trend.text for trend in trends[:5]]
+    return [trend.text for trend in trends[:4]]
 
 
 
