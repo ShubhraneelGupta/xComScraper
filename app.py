@@ -55,14 +55,10 @@ def home():
     time.sleep(5)
     driver.find_elements(By.TAG_NAME, "input")[1].send_keys(F"{XCOM_PASSWORD}\n")
 
-    show_more = WebDriverWait(driver, 30).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '[href="/explore/tabs/for-you"]')))
-    show_more = driver.find_element(By.CSS_SELECTOR, '[href="/explore/tabs/for-you"]') 
-    show_more.click()
-
     trends = WebDriverWait(driver, 15).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '[data-testid="trend"]')))
     trends = driver.find_elements(By.CSS_SELECTOR, '[data-testid="trend"]')
     
-    return [trend.text for trend in trends[:5]]
+    return [trend.text for trend in trends[:4]]
 
 
 
