@@ -52,7 +52,7 @@ def home():
     time.sleep(5)
     driver.find_element(By.TAG_NAME, "input").send_keys(f"{XCOM_USERNAME}\n")
 
-    time.sleep(5)
+    time.sleep(10)
     driver.find_elements(By.TAG_NAME, "input")[1].send_keys(F"{XCOM_PASSWORD}\n")
 
     trends = WebDriverWait(driver, 15).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '[data-testid="trend"]')))
