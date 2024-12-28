@@ -37,7 +37,7 @@ options.add_argument("--no-sandbox")
 options.add_argument("--headless")
 options.add_argument("--disable-dev-shm-usage")
 options.add_argument("--disable-gpu")
-options.add_argument("--window-size=2560,1440")
+options.add_argument("--window-size=1920,1080")
 # Set up proxy for Selenium WebDriver
 # options.add_argument('--proxy-server=%s' % PROXYMESH_URL)
 
@@ -49,9 +49,9 @@ service = Service("/usr/bin/chromedriver")
 @app.route("/api/my-ip")
 def my_ip():
     driver = webdriver.Chrome(service=service, options=options)
-    driver.get("https://www.whatismyip.net/")
+    driver.get("https://www.httpbin.org/ip")
     time.sleep(1)
-    ip_addr = driver.find_element(By.ID, "userip").text
+    ip_addr = driver.find_element(By.TAG_NAME, "body").text
     return ip_addr
 
 
